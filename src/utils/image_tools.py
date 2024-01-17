@@ -18,7 +18,6 @@ def generate_rotated_images_with_noise(image_to_rotate: np.ndarray, number_of_pi
 def resize_to_original(image_to_resize: np.ndarray) -> np.ndarray:
     return cv2.resize(image_to_resize, (original_image.shape[1], original_image.shape[0]))
 
-
 def show_image(window_title: str, image: np.ndarray) -> None:
     cv2.imshow(window_title, image)
     cv2.waitKey(0)
