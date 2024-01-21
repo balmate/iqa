@@ -16,7 +16,7 @@ def salt_and_pepper(image: np.ndarray, number_of_pixels_to_transform: int) -> np
         image[y][x] = 0
     return image
 
-def gaussian(image: np.ndarray, mean: float = 0.5, sigma: float = 200) -> np.ndarray:
+def gaussian(image: np.ndarray, mean: float, sigma: float) -> np.ndarray:
     noise = np.zeros(image.shape, np.uint8)
     cv2.randn(noise, mean, sigma)
 
