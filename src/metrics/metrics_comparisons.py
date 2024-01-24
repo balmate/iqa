@@ -2,10 +2,10 @@ import numpy as np
 import utils.image_tools as image_tools
 import metrics.metrics_caller as mc
 
-def mse_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def mse_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("MSE with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
@@ -13,10 +13,10 @@ def mse_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType
 
     call_prints(original_image, rotated_180, "mse")
 
-def ergas_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def ergas_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("ERGAS with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
@@ -24,10 +24,10 @@ def ergas_comparison(original_image: np.ndarray, useNoise: bool = False, noiseTy
 
     call_prints(original_image, rotated_180, "ergas")
 
-def psnr_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def psnr_comparison(original_image: np.ndarray, use_noise: bool = False, nosie_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, nosie_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("PSNR with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
@@ -35,10 +35,10 @@ def psnr_comparison(original_image: np.ndarray, useNoise: bool = False, noiseTyp
 
     call_prints(original_image, rotated_180, "psnr")
 
-def ssim_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def ssim_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("SSIM with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
@@ -46,10 +46,10 @@ def ssim_comparison(original_image: np.ndarray, useNoise: bool = False, noiseTyp
 
     call_prints(original_image, rotated_180, "ssim")
 
-def msssim_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def msssim_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("MS-SSIM with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
@@ -57,21 +57,21 @@ def msssim_comparison(original_image: np.ndarray, useNoise: bool = False, noiseT
 
     call_prints(original_image, rotated_180, "msssim")
 
-def vif_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def vif_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("VIF with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
         print("VIF:")
-
+    
     call_prints(original_image, rotated_180, "vif")
 
-def scc_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def scc_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("SCC with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)
@@ -79,10 +79,10 @@ def scc_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType
 
     call_prints(original_image, rotated_180, "scc")
 
-def sam_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "salt&pepper", number_of_pixels_to_transform: int = 20000, 
-                   mean: float = 0.5, sigma: float = 200, gamma: float = 0.2) -> None:
-    if (useNoise):
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noiseType, number_of_pixels_to_transform, mean, sigma, gamma)
+def sam_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
+    if use_noise:
+        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
         print("SAM with noised images:")
     else:
         rotated_180 = image_tools.generate_180_rotated(original_image)

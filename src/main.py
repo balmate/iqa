@@ -1,15 +1,16 @@
 import numpy as np
 import utils.image_tools as image_tools
 import utils.noise_tools as noise_tools
-import cv2
-import metrics.metrics_caller as mc
 import metrics.metrics_comparisons as mcc
 
 def main():
-    original_image = image_tools.load_image('../assets/cat.jpg')
-    # noisy_image = noise_tools.salt_and_pepper(original_image, 20000)
+    original_image = image_tools.load_image('../assets/nature.jpg')
+    image_tools.show_image("original", original_image)
+    
+    # scaled_down = image_tools.create_scaled_image(original_image, 30)
+    # scaled_up = image_tools.create_scaled_image(original_image, 170)
 
-    # original
+    # rotated
     call_comparison(original_image)
 
     print("----------------------------")
@@ -27,50 +28,46 @@ def main():
     # poisson
     call_comparison(original_image, True, "poisson")
 
-    # ----------------------------
     print("----------------------------")
 
-    # image_tools.show_image("resized", cv2.resize(original_image, (400, 230)))
-    # image_tools.show_image("resized", cv2.resize(original_image, (1890, 1700)))
 
-
-def call_comparison(original_image: np.ndarray, useNoise: bool = False, noiseType: str = "") -> None:
-    if noiseType == "":
+def call_comparison(image: np.ndarray, use_noise: bool = False, noise_type: str = "") -> None:
+    if noise_type == "":
         print("rotated comparison")
-        image_tools.show_image("rotated", image_tools.generate_180_rotated(original_image))
-    elif noiseType == "salt&pepper":
-        print("salt&pepper noise comparison (default - 20k)")
-        image_tools.show_image("salt&pepper", noise_tools.salt_and_pepper(original_image, 20000))
-    elif noiseType == "gaussian":
-        print("gaussian noise comparison (default - mean 0.5, sigma 200")
-        image_tools.show_image("gaussian", noise_tools.gaussian(original_image, 0.5, 200))
-    elif noiseType == "poisson":
-        print("poisson noise comparison (default - 0.2 gamma)")
-        image_tools.show_image("poisson", noise_tools.poisson(original_image, 0.2))
+        image_tools.show_image("rotated", image_tools.generate_180_rotated(image))
+    elif noise_type == "salt&pepper":
+        print("salt&pepper noise comparison (default - 15k)")
+        image_tools.show_image("salt&pepper", noise_tools.salt_and_pepper(image, 15000))
+    elif noise_type == "gaussian":
+        print("gaussian noise comparison (default - mean 0.5, sigma 100)")
+        image_tools.show_image("gaussian", noise_tools.gaussian(image, 0.5, 100))
+    elif noise_type == "poisson":
+        print("poisson noise comparison (default - 0.5 gamma)")
+        image_tools.show_image("poisson", noise_tools.poisson(image, 0.5))
 
     # MSE
-    mcc.mse_comparison(original_image, useNoise, noiseType)
+    mcc.mse_comparison(image, use_noise, noise_type)
 
     # ERGAS
-    mcc.ergas_comparison(original_image, useNoise, noiseType)
+    mcc.ergas_comparison(image, use_noise, noise_type)
 
     # PSNR
-    mcc.psnr_comparison(original_image, useNoise, noiseType)
+    mcc.psnr_comparison(image, use_noise, noise_type)
 
     # SSIM
-    mcc.ssim_comparison(original_image, useNoise, noiseType)
+    mcc.ssim_comparison(image, use_noise, noise_type)
 
     # MS-SSIM
-    mcc.msssim_comparison(original_image, useNoise, noiseType)
+    mcc.msssim_comparison(image, use_noise, noise_type)
 
     # VIF
-    mcc.vif_comparison(original_image, useNoise, noiseType)
+    mcc.vif_comparison(image, use_noise, noise_type)
 
     # SCC
-    mcc.scc_comparison(original_image, useNoise, noiseType)
+    mcc.scc_comparison(image, use_noise, noise_type)
 
     # SAM
-    mcc.sam_comparison(original_image, useNoise, noiseType)
+    mcc.sam_comparison(image, use_noise, noise_type)
 
 
 if __name__ == "__main__":
