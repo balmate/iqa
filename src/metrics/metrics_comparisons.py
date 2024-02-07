@@ -2,124 +2,35 @@ import numpy as np
 import utils.image_tools as image_tools
 import metrics.metrics_caller as mc
 
-def mse_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
+def call_concrete_comparison(original_image: np.ndarray, metric: str, rotate: bool, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
                    mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("MSE with noised images:")
+    if noise_type and not rotate:
+        deformed = image_tools.create_concrete_noisy_image(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
+        compared_to = f"{noise_type} noised"
+    elif noise_type and rotate:
+        deformed = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
+        compared_to = f"{noise_type} noised + 180 rotated"
     else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("MSE:")
+        deformed = image_tools.generate_180_rotated(original_image)
+        compared_to = "180 roted"
 
-    call_prints(original_image, rotated_180, "mse")
+    call_prints(original_image, deformed, metric, compared_to)
 
-def ergas_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("ERGAS with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("ERGAS:")
-
-    call_prints(original_image, rotated_180, "ergas")
-
-def psnr_comparison(original_image: np.ndarray, use_noise: bool = False, nosie_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, nosie_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("PSNR with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("PSNR:")
-
-    call_prints(original_image, rotated_180, "psnr")
-
-def ssim_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("SSIM with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("SSIM:")
-
-    call_prints(original_image, rotated_180, "ssim")
-
-def msssim_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("MS-SSIM with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("MS-SSIM:")
-
-    call_prints(original_image, rotated_180, "msssim")
-
-def vif_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("VIF with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("VIF:")
-    
-    call_prints(original_image, rotated_180, "vif")
-
-def scc_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("SCC with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("SCC:")
-
-    call_prints(original_image, rotated_180, "scc")
-
-def sam_comparison(original_image: np.ndarray, use_noise: bool = False, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5) -> None:
-    if use_noise:
-        rotated_180 = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
-        print("SAM with noised images:")
-    else:
-        rotated_180 = image_tools.generate_180_rotated(original_image)
-        print("SAM:")
-
-    call_prints(original_image, rotated_180, "sam")
-
-def call_prints(original_image: np.ndarray, rotated_180: np.ndarray, metric: str) -> None:
+def call_prints(original_image: np.ndarray, deformed: np.ndarray, metric: str, compared_to: str) -> None:
+    # write to file here ? 
     if metric == "mse":
-        print(mc.call_mse(original_image, original_image, "original"))
-        print(mc.call_mse(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_mse(original_image, deformed, compared_to))
     elif metric == "ergas":
-        print(mc.call_ergas(original_image, original_image, "original"))
-        print(mc.call_ergas(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_ergas(original_image, deformed, compared_to))
     elif metric == "psnr":
-        print(mc.call_psnr(original_image, original_image, "original"))
-        print(mc.call_psnr(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_psnr(original_image, deformed, compared_to))
     elif metric == "ssim":
-        print(mc.call_ssim(original_image, original_image, "original"))
-        print(mc.call_ssim(original_image, rotated_180, "180"))
-        print("\n")
-    elif metric == "msssim":
-        print(mc.call_msssim(original_image, original_image, "original"))
-        print(mc.call_msssim(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_ssim(original_image, deformed, compared_to))
+    elif metric == "ms-ssim":
+        print(mc.call_msssim(original_image, deformed, compared_to))
     elif metric == "vif":
-        print(mc.call_vif(original_image, original_image, "original"))
-        print(mc.call_vif(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_vif(original_image, deformed, compared_to))
     elif metric == "scc":
-        print(mc.call_scc(original_image, original_image, "original"))
-        print(mc.call_scc(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_scc(original_image, deformed, compared_to))
     elif metric == "sam":
-        print(mc.call_sam(original_image, original_image, "original"))
-        print(mc.call_sam(original_image, rotated_180, "180"))
-        print("\n")
+        print(mc.call_sam(original_image, deformed, compared_to))

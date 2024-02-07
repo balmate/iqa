@@ -11,7 +11,7 @@ def load_image(image_to_load: str) -> np.ndarray:
 def generate_180_rotated(image_to_rotate: np.ndarray) -> np.ndarray:
     return cv2.rotate(image_to_rotate, cv2.ROTATE_180)
 
-def generate_180_rotated_with_noise(image_to_modify: np.ndarray, noise_type: str, number_of_pixels_to_transform: int, mean: float, sigma: float, gamma: float):
+def generate_180_rotated_with_noise(image_to_modify: np.ndarray, noise_type: str, number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: float = 100, gamma: float = 0.5):
     noisy_image = create_concrete_noisy_image(image_to_modify, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
     return cv2.rotate(noisy_image, cv2.ROTATE_180)
 
