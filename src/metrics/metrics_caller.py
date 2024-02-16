@@ -4,42 +4,52 @@ import numpy as np
 from decimal import Decimal, ROUND_HALF_UP
 
 # MSE
-def call_mse(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    res = Decimal(sfr.mse(original_image, deformed_image))
-    return "MSE: original vs " + compared_to + ": " + quantize_decimal(res)
+def call_mse(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.mse(original_image, deformed_image)
+    print("MSE: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
+    return res
 
 # ERGAS
-def call_ergas(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    res = Decimal(sfr.ergas(original_image, deformed_image))
-    return "ERGAS: original vs " + compared_to + ": " + quantize_decimal(res)
+def call_ergas(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.ergas(original_image, deformed_image)
+    print("ERGAS: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
+    return res
 
 # PSNR
-def call_psnr(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    res = Decimal(sfr.psnr(original_image, deformed_image))
-    return "PSNR: original vs " + compared_to + ": " + quantize_decimal(res)
+def call_psnr(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.psnr(original_image, deformed_image)
+    print("PSNR: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
+    return res
 
 # SSIM
-def call_ssim(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    return "SSIM: original vs " + compared_to + ": " + str(sfr.ssim(original_image, deformed_image))
+def call_ssim(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.ssim(original_image, deformed_image)
+    print("SSIM: original vs " + compared_to + ": " + str(res))
+    return res
 
 # MS-SSIM
-def call_msssim(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    return "MS-SSIM: original vs " + compared_to + ": " + str(sfr.msssim(original_image, deformed_image))
+def call_msssim(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.msssim(original_image, deformed_image)
+    print("MS-SSIM: original vs " + compared_to + ": " + str(res))
+    return res
 
 # VIF
-def call_vif(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    res = Decimal(sfr.vifp(original_image, deformed_image))
-    return "VIF: original vs " + compared_to + ": " + quantize_decimal(res)
+def call_vif(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.vifp(original_image, deformed_image)
+    print("VIF: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
+    return res
 
 # SCC
-def call_scc(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    res = Decimal(sfr.scc(original_image, deformed_image))
-    return "SCC: original vs " + compared_to + ": " + quantize_decimal(res)
+def call_scc(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.scc(original_image, deformed_image)
+    print("SCC: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
+    return res
 
 # SAM
-def call_sam(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str) -> str:
-    res = Decimal(sfr.sam(original_image, deformed_image))
-    return "SAM: original vs " + compared_to + ": " + quantize_decimal(res)
+def call_sam(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
+    res = sfr.sam(original_image, deformed_image)
+    print("SAM: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
+    return res
 
 # helper methods
 def quantize_decimal(input: Decimal) -> str:

@@ -1,15 +1,13 @@
 import cv2
 import numpy as np
 import utils.noise_tools as noise_tools
+import imutils
 
 def load_image(image_to_load: str) -> np.ndarray:
     original = cv2.imread(image_to_load)
     global original_image
     original_image = original
     return original
-
-def generate_180_rotated(image_to_rotate: np.ndarray) -> np.ndarray:
-    return cv2.rotate(image_to_rotate, cv2.ROTATE_180)
 
 def generate_180_rotated_with_noise(image_to_modify: np.ndarray, noise_type: str, number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: float = 100, gamma: float = 0.5):
     noisy_image = create_concrete_noisy_image(image_to_modify, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
@@ -33,3 +31,6 @@ def create_concrete_noisy_image(image_to_return, noise_type: str, number_of_pixe
         return noise_tools.gaussian(image_to_return, mean, sigma)
     elif noise_type == "poisson":
         return noise_tools.poisson(image_to_return, gamma)
+    
+def create_rotated_image(image, angle) -> np.ndarray:
+  return imutils.rotate(image, angle)
