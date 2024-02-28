@@ -1,8 +1,0 @@
-mse_rotation_results = []
-ergas_rotation_results = []
-psnr_rotation_results = []
-ssim_rotation_results = []
-ms_ssim_rotation_results = []
-vif_rotation_results = []
-scc_rotation_results = []
-sam_rotation_results = []

@@ -32,5 +32,5 @@ def create_concrete_noisy_image(image_to_return, noise_type: str, number_of_pixe
     elif noise_type == "poisson":
         return noise_tools.poisson(image_to_return, gamma)
     
-def create_rotated_image(image, angle) -> np.ndarray:
+def create_rotated_image(image: np.ndarray, angle: int) -> np.ndarray:
   return imutils.rotate(image, angle)

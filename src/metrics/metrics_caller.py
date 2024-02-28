@@ -23,8 +23,8 @@ def call_psnr(original_image: np.ndarray, deformed_image: np.ndarray, compared_t
 
 # SSIM
 def call_ssim(original_image: np.ndarray, deformed_image: np.ndarray, compared_to: str):
-    res = sfr.ssim(original_image, deformed_image)
-    print("SSIM: original vs " + compared_to + ": " + str(res))
+    res = sfr.ssim(original_image, deformed_image)[0]
+    print("SSIM: original vs " + compared_to + ": " + quantize_decimal(Decimal(res)))
     return res
 
 # MS-SSIM
