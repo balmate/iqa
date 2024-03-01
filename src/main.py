@@ -16,6 +16,7 @@ def main():
     salt_pepper_result_holder = ResultHolder("salt&pepper")
     gaussian_result_holder = ResultHolder("gaussian")
     poisson_result_holder = ResultHolder("poisson")
+    blur_result_holder = ResultHolder("blur")
     salt_pepper_with_rotation_result_holder = ResultHolder("salt&pepper + 180 rotation")
     gaussian_with_rotation_result_holder = ResultHolder("gaussian + 180 rotation")
     poisson_with_rotation_result_holder = ResultHolder("poisson + 180 rotation")
@@ -23,6 +24,15 @@ def main():
     # # original vs rotated
     # print("Comparison: original vs 180 rotated")
     # call_comparison(original_image, rotate = True)
+
+    # original vs blurred
+    print("Comparison: blur with different param values")
+    for ksize in consts.KERNEL_SIZES:
+        print(f"Blur value: {ksize}")
+        call_comparison(original_image, blur_result_holder, noise_type = "blur", blur = ksize)
+    
+    # plotting the results
+    pt.create_plots_from_object(blur_result_holder, consts.KERNEL_SIZES, "blur values", "blurred")
 
     # original vs rotated with different angles
     print("Comparison: rotated with different angles")
@@ -90,7 +100,7 @@ def main():
 
 
 def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool = False, angle: int = 180, noise_type: str = "", number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: int = 100,
-                    gamma: float = 0.5) -> None:
+                    gamma: float = 0.5, blur: list = (5,5)) -> None:
     metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
     if noise_type == "":
         print("rotated comparison")
@@ -113,9 +123,15 @@ def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool
     elif noise_type == "poisson" and rotate:
         print(f"poisson noise comparison (gamma: {gamma})")
         image_tools.show_image("poisson", image_tools.generate_180_rotated_with_noise(image, "poisson", gamma = gamma))
+    elif noise_type == "blur" and not rotate:
+        print(f"blur comparison (values: {blur})")
+        image_tools.show_image("blur", noise_tools.blur(image, blur))
+    elif noise_type == "blur" and rotate:
+        print(f"blur comparison with rotation (values: {blur}")
+        image_tools.show_image("blur", image_tools.generate_180_rotated_with_noise(image, "blur", blur = blur))
 
     for metric in metrics:
-        result = mcc.call_concrete_comparison(image, metric, rotate, angle, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
+        result = mcc.call_concrete_comparison(image, metric, rotate, angle, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur)
         if metric == "mse":
             result_holder.mse_results.append(result)
         elif metric == "ergas":

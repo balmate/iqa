@@ -3,12 +3,12 @@ import utils.image_tools as image_tools
 import metrics.metrics_caller as mc
 
 def call_concrete_comparison(original_image: np.ndarray, metric: str, rotate: bool, angle: int = 180, noise_type: str = "salt&pepper", number_of_pixels_to_transform: int = 15000, 
-                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5):
+                   mean: float = 0.5, sigma: float = 100, gamma: float = 0.5, blur: list = (5,5)):
     if noise_type and not rotate:
-        deformed = image_tools.create_concrete_noisy_image(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
+        deformed = image_tools.create_concrete_noisy_image(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur)
         compared_to = f"{noise_type} noised"
     elif noise_type and rotate:
-        deformed = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma)
+        deformed = image_tools.generate_180_rotated_with_noise(original_image, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur)
         compared_to = f"{noise_type} noised + {angle} rotated"
     else:
         deformed = image_tools.create_rotated_image(original_image, angle)

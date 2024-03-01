@@ -30,3 +30,6 @@ def poisson(image: np.ndarray, gamma: float) -> np.ndarray:
 
 def pick_random_coordinate(row: int, col: int) -> int:
     return random.randint(0, row - 1), random.randint(0, col - 1)
+
+def blur(image: np.ndarray, kernel: list) -> np.ndarray:
+    return cv2.blur(image, kernel)
