@@ -33,3 +33,11 @@ def pick_random_coordinate(row: int, col: int) -> int:
 
 def blur(image: np.ndarray, kernel: list) -> np.ndarray:
     return cv2.blur(image, kernel)
+
+def fade(image: np.ndarray, percent: float) -> np.ndarray:
+    return np.clip(image * (1 - percent) + 255 * percent, 0, 255).astype(np.uint8)
+
+def saturation(image: np.ndarray, percent: float) -> np.ndarray:
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    hsv_image[:, :, 1] = np.clip(hsv_image[:, :, 1] * percent, 0, 255)
+    return cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
