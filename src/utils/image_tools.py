@@ -10,8 +10,8 @@ def load_image(image_to_load: str) -> np.ndarray:
     return original
 
 def generate_180_rotated_with_noise(image_to_modify: np.ndarray, noise_type: str, number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: float = 100,
-                                     gamma: float = 0.5, blur: list = (5,5), fade_percent: float = 0.2, saturation: float = 0.2):
-    noisy_image = create_concrete_noisy_image(image_to_modify, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur, fade_percent, saturation)
+                                     gamma: float = 0.5, blur: list = (5,5), fade_percent: float = 0.2, saturation: float = 0.2, alpha: float = 0.5):
+    noisy_image = create_concrete_noisy_image(image_to_modify, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur, fade_percent, saturation, alpha)
     return cv2.rotate(noisy_image, cv2.ROTATE_180)
 
 def resize_to_original(image_to_resize: np.ndarray) -> np.ndarray:
@@ -27,7 +27,7 @@ def create_scaled_image(original_image: np.ndarray, scale_value: int):
     return cv2.resize(original_image, new_size, interpolation=cv2.INTER_AREA)
 
 def create_concrete_noisy_image(image_to_return: np.ndarray, noise_type: str, number_of_pixels_to_transform: int, mean: float, sigma: float, gamma: float, blur: list,
-                                 fade_percent: float, saturation: float):
+                                 fade_percent: float, saturation: float, alpha: float):
     if noise_type == "salt&pepper":
         return noise_tools.salt_and_pepper(image_to_return, number_of_pixels_to_transform)
     elif noise_type == "gaussian":
@@ -40,6 +40,8 @@ def create_concrete_noisy_image(image_to_return: np.ndarray, noise_type: str, nu
         return noise_tools.fade(image_to_return, fade_percent)
     elif noise_type == "saturation":
         return noise_tools.saturation(image_to_return, saturation)
+    elif noise_type == "contrast":
+        return noise_tools.contrast(image_to_return, alpha)
     
 def create_rotated_image(image: np.ndarray, angle: int) -> np.ndarray:
   return imutils.rotate(image, angle)

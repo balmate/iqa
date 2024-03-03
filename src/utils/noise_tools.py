@@ -41,3 +41,6 @@ def saturation(image: np.ndarray, percent: float) -> np.ndarray:
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     hsv_image[:, :, 1] = np.clip(hsv_image[:, :, 1] * percent, 0, 255)
     return cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
+
+def contrast(image: np.ndarray, alpha: float) -> np.ndarray:
+    return cv2.convertScaleAbs(image, alpha = alpha)

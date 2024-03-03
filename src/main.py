@@ -7,6 +7,9 @@ from classes.ResultHolder import ResultHolder
 from utils import consts
 import matplotlib.pyplot as plt
 
+import cv2
+import sewar.full_ref as sfr
+
 def main():
     original_image = image_tools.load_image('../assets/nature.jpg')
     image_tools.show_image("original", original_image)
@@ -20,6 +23,7 @@ def main():
     fade_result_holder = ResultHolder("fade")
     intensify_result_holder = ResultHolder("intensify")
     saturation_result_holder = ResultHolder("saturation")
+    contrast_result_holder = ResultHolder("contrast")
     salt_pepper_with_rotation_result_holder = ResultHolder("salt&pepper + 180 rotation")
     gaussian_with_rotation_result_holder = ResultHolder("gaussian + 180 rotation")
     poisson_with_rotation_result_holder = ResultHolder("poisson + 180 rotation")
@@ -27,6 +31,15 @@ def main():
     # # original vs rotated
     # print("Comparison: original vs 180 rotated")
     # call_comparison(original_image, rotate = True)
+
+    # original vs saturated
+    print("Comparison: contrast with different param values")
+    for alpha in consts.ALPHAS:
+        print(f"Contrast value: {alpha}")
+        call_comparison(original_image, contrast_result_holder, noise_type = "contrast", alpha = alpha)
+
+    # plotting the results
+    pt.create_plots_from_object(contrast_result_holder, consts.ALPHAS, "contrast values", "contrast")
 
     # original vs saturated
     print("Comparison: saturation with different param values")
@@ -121,7 +134,7 @@ def main():
 
 
 def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool = False, angle: int = 180, noise_type: str = "", number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: int = 100,
-                    gamma: float = 0.5, blur: list = (5,5), fade_percent: float = 0.2, saturation: float = 0.2) -> None:
+                    gamma: float = 0.5, blur: list = (5,5), fade_percent: float = 0.2, saturation: float = 0.2, alpha: float = 0.5) -> None:
     metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
     if noise_type == "":
         print("rotated comparison")
@@ -162,9 +175,15 @@ def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool
     elif noise_type == "saturation" and rotate:
         print(f"saturation comparison with rotation (saturation percent: {saturation}")
         image_tools.show_image("saturation", image_tools.generate_180_rotated_with_noise(image, "saturation", saturation = saturation))
+    elif noise_type == "contrast" and not rotate:
+        print(f"contrast comparison (alpha: {alpha})")
+        image_tools.show_image("contrast", noise_tools.contrast(image, alpha))
+    elif noise_type == "contrast" and rotate:
+        print(f"contrast comparison with rotation (alpha: {alpha}")
+        image_tools.show_image("contrast", image_tools.generate_180_rotated_with_noise(image, "contrast", alpha = alpha))
 
     for metric in metrics:
-        result = mcc.call_concrete_comparison(image, metric, rotate, angle, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur, fade_percent, saturation)
+        result = mcc.call_concrete_comparison(image, metric, rotate, angle, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur, fade_percent, saturation, alpha)
         if metric == "mse":
             result_holder.mse_results.append(result)
         elif metric == "ergas":
