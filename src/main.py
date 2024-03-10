@@ -21,9 +21,9 @@ def main():
     poisson_result_holder = ResultHolder("poisson")
     blur_result_holder = ResultHolder("blur")
     fade_result_holder = ResultHolder("fade")
-    intensify_result_holder = ResultHolder("intensify")
     saturation_result_holder = ResultHolder("saturation")
     contrast_result_holder = ResultHolder("contrast")
+    zoom_result_holder = ResultHolder("zoom") 
     salt_pepper_with_rotation_result_holder = ResultHolder("salt&pepper + 180 rotation")
     gaussian_with_rotation_result_holder = ResultHolder("gaussian + 180 rotation")
     poisson_with_rotation_result_holder = ResultHolder("poisson + 180 rotation")
@@ -31,6 +31,15 @@ def main():
     # # original vs rotated
     # print("Comparison: original vs 180 rotated")
     # call_comparison(original_image, rotate = True)
+
+    # original vs zoomed
+    print("Comparison: zoom with different param values")
+    for zoom in consts.ZOOM_VALUES:
+        print(f"Zoom value: {zoom}")
+        call_comparison(original_image, zoom_result_holder, noise_type = "zoom", zoom = zoom)
+
+    # plotting the results
+    pt.create_plots_from_object(zoom_result_holder, consts.ZOOM_VALUES, "zoom values", "zoom")
 
     # original vs saturated
     print("Comparison: contrast with different param values")
@@ -134,7 +143,7 @@ def main():
 
 
 def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool = False, angle: int = 180, noise_type: str = "", number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: int = 100,
-                    gamma: float = 0.5, blur: list = (5,5), fade_percent: float = 0.2, saturation: float = 0.2, alpha: float = 0.5) -> None:
+                    gamma: float = 0.5, blur: list = (5,5), fade_percent: float = 0.2, saturation: float = 0.2, alpha: float = 0.5, zoom: float = 1.5) -> None:
     metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
     if noise_type == "":
         print("rotated comparison")
@@ -181,9 +190,15 @@ def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool
     elif noise_type == "contrast" and rotate:
         print(f"contrast comparison with rotation (alpha: {alpha}")
         image_tools.show_image("contrast", image_tools.generate_180_rotated_with_noise(image, "contrast", alpha = alpha))
+    elif noise_type == "zoom" and not rotate:
+        print(f"zoom comparison (zoom value: {zoom})")
+        image_tools.show_image("zoom", noise_tools.zoom(image, zoom))
+    elif noise_type == "contrast" and rotate:
+        print(f"zoom comparison with rotation (zoom value: {zoom}")
+        image_tools.show_image("zoom", image_tools.generate_180_rotated_with_noise(image, "zoom", zoom = zoom))
 
     for metric in metrics:
-        result = mcc.call_concrete_comparison(image, metric, rotate, angle, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur, fade_percent, saturation, alpha)
+        result = mcc.call_concrete_comparison(image, metric, rotate, angle, noise_type, number_of_pixels_to_transform, mean, sigma, gamma, blur, fade_percent, saturation, alpha, zoom)
         if metric == "mse":
             result_holder.mse_results.append(result)
         elif metric == "ergas":
