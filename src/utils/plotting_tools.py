@@ -45,50 +45,50 @@ def create_plots_from_object(result_holder: ResultHolder, param_consts: list, pa
     for i in inspect.getmembers(result_holder):
         if second_param_consts is None:
             if i[0] == "mse_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.mse_results, "mse values", "mse with " + transform, f"mse_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.mse_results, "mse values", "mse with " + transform, f"{result_holder.image_name}_mse_{transform}")
             elif i[0] == "ergas_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.ergas_results, "ergas values", "ergas with " + transform, f"ergas_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.ergas_results, "ergas values", "ergas with " + transform, f"{result_holder.image_name}_ergas_{transform}")
             elif i[0] == "psnr_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.psnr_results, "psnr values", "psnr with " + transform, f"psnr_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.psnr_results, "psnr values", "psnr with " + transform, f"{result_holder.image_name}_psnr_{transform}")
             elif i[0] == "ssim_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.ssim_results, "ssim values", "ssim with " + transform, f"ssim_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.ssim_results, "ssim values", "ssim with " + transform, f"{result_holder.image_name}_ssim_{transform}")
             elif i[0] == "ms_ssim_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.ms_ssim_results, "ms-ssim values", "ms-ssim with " + transform, f"ms_ssim_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.ms_ssim_results, "ms-ssim values", "ms-ssim with " + transform, f"{result_holder.image_name}_ms_ssim_{transform}")
             elif i[0] == "vif_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.vif_results, "vif values", "vif with " + transform, f"vif_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.vif_results, "vif values", "vif with " + transform, f"{result_holder.image_name}_vif_{transform}")
             elif i[0] == "scc_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.scc_results, "scc values", "scc with " + transform, f"scc_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.scc_results, "scc values", "scc with " + transform, f"{result_holder.image_name}_scc_{transform}")
             elif i[0] == "sam_results":
-                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.sam_results, "sam values", "sam with " + transform, f"sam_{transform}")
+                create_plot_for_metric_simple_param(param_consts, param_consts_name, result_holder.sam_results, "sam values", "sam with " + transform, f"{result_holder.image_name}_sam_{transform}")
         else:
             if i[0] == "mse_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.mse_results, "mse values", "mse with " + transform, f"mse_{transform}")
+                                                    result_holder.mse_results, "mse values", "mse with " + transform, f"{result_holder.image_name}_mse_{transform}")
             elif i[0] == "ergas_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.ergas_results, "ergas values", "ergas with " + transform, f"ergas_{transform}")
+                                                    result_holder.ergas_results, "ergas values", "ergas with " + transform, f"{result_holder.image_name}_ergas_{transform}")
             elif i[0] == "psnr_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.psnr_results, "psnr values", "psnr with " + transform, f"psnr_{transform}")
+                                                    result_holder.psnr_results, "psnr values", "psnr with " + transform, f"{result_holder.image_name}_psnr_{transform}")
             elif i[0] == "ssim_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.ssim_results, "ssim values", "ssim with " + transform, f"ssim_{transform}")
+                                                    result_holder.ssim_results, "ssim values", "ssim with " + transform, f"{result_holder.image_name}_ssim_{transform}")
             elif i[0] == "ms_ssim_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.ms_ssim_results, "ms-ssim values", "ms-ssim with " + transform, f"ms_ssim_{transform}")
+                                                    result_holder.ms_ssim_results, "ms-ssim values", "ms-ssim with " + transform, f"{result_holder.image_name}_ms_ssim_{transform}")
             elif i[0] == "vif_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.vif_results, "vif values", "vif with " + transform, f"vif_{transform}")
+                                                    result_holder.vif_results, "vif values", "vif with " + transform, f"{result_holder.image_name}_vif_{transform}")
             elif i[0] == "scc_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.scc_results, "scc values", "scc with " + transform, f"scc_{transform}")
+                                                    result_holder.scc_results, "scc values", "scc with " + transform, f"{result_holder.image_name}_scc_{transform}")
             elif i[0] == "sam_results":
                 create_plot_for_metric_double_param(param_consts, param_consts_name, second_param_consts, second_param_consts_name, 
-                                                    result_holder.sam_results, "sam values", "sam with " + transform, f"sam_{transform}")
+                                                    result_holder.sam_results, "sam values", "sam with " + transform, f"{result_holder.image_name}_sam_{transform}")
 
 def save_plot(file_name: str) -> None:
-    metric = file_name.split('_')[0]
+    metric = file_name.split('_')[1]
     if metric == "ms":
         plt.savefig("results/ms_ssim/" + file_name)
     else:
-        plt.savefig("results/" + file_name.split('_')[0] + "/" + file_name)
+        plt.savefig("results/" + file_name.split('_')[1] + "/" + file_name)

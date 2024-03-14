@@ -71,5 +71,5 @@ def pick_random_coordinate(row: int, col: int) -> int:
     return random.randint(0, row - 1), random.randint(0, col - 1)
 
 def call_save(image: np.ndarray, path: str, file_name: str) -> None:
-    file_name = file_name.replace('.', '_') + ".jpg"
+    file_name = image_tools.current_image_name + "_" + file_name.replace('.', '_') + ".jpg"
     image_tools.save_image(image, path + file_name)

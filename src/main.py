@@ -5,140 +5,148 @@ import metrics.metrics_comparisons as mcc
 import utils.plotting_tools as pt
 from classes.ResultHolder import ResultHolder
 from utils import consts
-import matplotlib.pyplot as plt
-
-import cv2
-import sewar.full_ref as sfr
+import os
 
 def main():
-    original_image = image_tools.load_image('../assets/nature.jpg')
-    image_tools.show_image("original", original_image)
+    # original_image = image_tools.load_image('../assets/nature.jpg')
+    # image_tools.show_image("original", original_image)
+
+    path_to_images = "../assets/kadid_ref_images"
+
+    for image_file in os.listdir(path_to_images):
+        image_path = os.path.join(path_to_images, image_file)
+
+        image_name = image_file.split('.')[0]
+        image = image_tools.load_image(image_path, image_name)
+        image_tools.show_image(image_name, image)
 
     # create result holders for plotting
-    rotation_result_holder = ResultHolder("rotations")
-    salt_pepper_result_holder = ResultHolder("salt&pepper")
-    gaussian_result_holder = ResultHolder("gaussian")
-    poisson_result_holder = ResultHolder("poisson")
-    blur_result_holder = ResultHolder("blur")
-    fade_result_holder = ResultHolder("fade")
-    saturation_result_holder = ResultHolder("saturation")
-    contrast_result_holder = ResultHolder("contrast")
-    zoom_result_holder = ResultHolder("zoom") 
-    salt_pepper_with_rotation_result_holder = ResultHolder("salt&pepper + 180 rotation")
-    gaussian_with_rotation_result_holder = ResultHolder("gaussian + 180 rotation")
-    poisson_with_rotation_result_holder = ResultHolder("poisson + 180 rotation")
+        rotation_result_holder = ResultHolder("rotations", image_name)
+        salt_pepper_result_holder = ResultHolder("salt&pepper", image_name)
+        gaussian_result_holder = ResultHolder("gaussian", image_name)
+        poisson_result_holder = ResultHolder("poisson", image_name)
+        blur_result_holder = ResultHolder("blur", image_name)
+        fade_result_holder = ResultHolder("fade", image_name)
+        saturation_result_holder = ResultHolder("saturation", image_name)
+        contrast_result_holder = ResultHolder("contrast", image_name)
+        zoom_result_holder = ResultHolder("zoom", image_name)
+        # salt_pepper_with_rotation_result_holder = ResultHolder("salt&pepper + 180 rotation")
+        # gaussian_with_rotation_result_holder = ResultHolder("gaussian + 180 rotation")
+        # poisson_with_rotation_result_holder = ResultHolder("poisson + 180 rotation")
 
-    # # original vs rotated
-    # print("Comparison: original vs 180 rotated")
-    # call_comparison(original_image, rotate = True)
+        # # original vs rotated
+        # print("Comparison: original vs 180 rotated")
+        # call_comparison(original_image, rotate = True)
 
-    # original vs zoomed
-    print("Comparison: zoom with different param values")
-    for zoom in consts.ZOOM_VALUES:
-        print(f"Zoom value: {zoom}")
-        call_comparison(original_image, zoom_result_holder, noise_type = "zoom", zoom = zoom)
 
-    # plotting the results
-    pt.create_plots_from_object(zoom_result_holder, consts.ZOOM_VALUES, "zoom values", "zoom")
 
-    # original vs saturated
-    print("Comparison: contrast with different param values")
-    for alpha in consts.ALPHAS:
-        print(f"Contrast value: {alpha}")
-        call_comparison(original_image, contrast_result_holder, noise_type = "contrast", alpha = alpha)
+        # original vs zoomed
+        print("Comparison: zoom with different param values")
+        for zoom in consts.ZOOM_VALUES:
+            print(f"Zoom value: {zoom}")
+            call_comparison(image, zoom_result_holder, noise_type = "zoom", zoom = zoom)
 
-    # plotting the results
-    pt.create_plots_from_object(contrast_result_holder, consts.ALPHAS, "contrast values", "contrast")
+        # plotting the results
+        pt.create_plots_from_object(zoom_result_holder, consts.ZOOM_VALUES, "zoom values", "zoom")
 
-    # original vs saturated
-    print("Comparison: saturation with different param values")
-    for percent in consts.SATURATION_VALUES:
-        print(f"Saturation value: {percent}")
-        call_comparison(original_image, saturation_result_holder, noise_type = "saturation", saturation = percent)
+        # original vs saturated
+        print("Comparison: contrast with different param values")
+        for alpha in consts.ALPHAS:
+            print(f"Contrast value: {alpha}")
+            call_comparison(image, contrast_result_holder, noise_type = "contrast", alpha = alpha)
 
-    # plotting the results
-    pt.create_plots_from_object(saturation_result_holder, consts.SATURATION_VALUES, "saturation values", "saturation")
+        # plotting the results
+        pt.create_plots_from_object(contrast_result_holder, consts.ALPHAS, "contrast values", "contrast")
 
-    # original vs faded
-    print("Comparison: fade with different param values")
-    for percent in consts.FADE_VALUES:
-        print(f"Fade value: {percent}")
-        call_comparison(original_image, fade_result_holder, noise_type = "fade", fade_percent = percent)
+        # original vs saturated
+        print("Comparison: saturation with different param values")
+        for percent in consts.SATURATION_VALUES:
+            print(f"Saturation value: {percent}")
+            call_comparison(image, saturation_result_holder, noise_type = "saturation", saturation = percent)
 
-    # plotting the results
-    pt.create_plots_from_object(fade_result_holder, consts.FADE_VALUES, "fade values", "faded")
+        # plotting the results
+        pt.create_plots_from_object(saturation_result_holder, consts.SATURATION_VALUES, "saturation values", "saturation")
+
+        # original vs faded
+        print("Comparison: fade with different param values")
+        for percent in consts.FADE_VALUES:
+            print(f"Fade value: {percent}")
+            call_comparison(image, fade_result_holder, noise_type = "fade", fade_percent = percent)
+
+        # plotting the results
+        pt.create_plots_from_object(fade_result_holder, consts.FADE_VALUES, "fade values", "faded")
+            
+        # original vs blurred
+        print("Comparison: blur with different param values")
+        for ksize in consts.KERNEL_SIZES:
+            print(f"Blur value: {ksize}")
+            call_comparison(image, blur_result_holder, noise_type = "blur", blur = ksize)
         
-    # original vs blurred
-    print("Comparison: blur with different param values")
-    for ksize in consts.KERNEL_SIZES:
-        print(f"Blur value: {ksize}")
-        call_comparison(original_image, blur_result_holder, noise_type = "blur", blur = ksize)
-    
-    # plotting the results
-    pt.create_plots_from_object(blur_result_holder, consts.KERNEL_SIZES, "blur values", "blurred")
+        # plotting the results
+        pt.create_plots_from_object(blur_result_holder, consts.KERNEL_SIZES, "blur values", "blurred")
 
-    # original vs rotated with different angles
-    print("Comparison: rotated with different angles")
-    for angle in consts.ANGLES:
-        print(f"Angle: {angle} degrees")
-        call_comparison(original_image, rotation_result_holder, True, angle)
-    
-    # plotting the results
-    pt.create_plots_from_object(rotation_result_holder, consts.ANGLES, "angles (in degree)", "rotation", None, None)
+        # original vs rotated with different angles
+        print("Comparison: rotated with different angles")
+        for angle in consts.ANGLES:
+            print(f"Angle: {angle} degrees")
+            call_comparison(image, rotation_result_holder, True, angle)
+        
+        # plotting the results
+        pt.create_plots_from_object(rotation_result_holder, consts.ANGLES, "angles (in degree)", "rotation", None, None)
 
-    # original vs salt&pepper with different pixel values to transform
-    print("Comparison: salt&pepper with different param values")
-    for value in consts.PIXELS_TO_TRANSFORM:
-        print(f"Number of pixels to transform: {value}")
-        call_comparison(original_image, salt_pepper_result_holder, noise_type = "salt&pepper", number_of_pixels_to_transform = value)
-    
-    # plotting the results
-    pt.create_plots_from_object(salt_pepper_result_holder, consts.PIXELS_TO_TRANSFORM, "pixels transformed", "salt&pepper")
+        # original vs salt&pepper with different pixel values to transform
+        print("Comparison: salt&pepper with different param values")
+        for value in consts.PIXELS_TO_TRANSFORM:
+            print(f"Number of pixels to transform: {value}")
+            call_comparison(image, salt_pepper_result_holder, noise_type = "salt&pepper", number_of_pixels_to_transform = value)
+        
+        # plotting the results
+        pt.create_plots_from_object(salt_pepper_result_holder, consts.PIXELS_TO_TRANSFORM, "pixels transformed", "salt&pepper")
 
-    # original vs gaussian with different param values
-    print("Comparison: gaussian with different param values")
-    for i in range(8):
-        print(f"Mean: {consts.MEANS[i]}, sigma: {consts.SIGMAS[i]}")
-        call_comparison(original_image, gaussian_result_holder, noise_type = "gaussian", mean = consts.MEANS[i], sigma = consts.SIGMAS[i])
+        # original vs gaussian with different param values
+        print("Comparison: gaussian with different param values")
+        for i in range(8):
+            print(f"Mean: {consts.MEANS[i]}, sigma: {consts.SIGMAS[i]}")
+            call_comparison(image, gaussian_result_holder, noise_type = "gaussian", mean = consts.MEANS[i], sigma = consts.SIGMAS[i])
 
-    # plotting the results
-    pt.create_plots_from_object(gaussian_result_holder, consts.MEANS, "mean", "gaussian", consts.SIGMAS, "sigma")
+        # plotting the results
+        pt.create_plots_from_object(gaussian_result_holder, consts.MEANS, "mean", "gaussian", consts.SIGMAS, "sigma")
 
-    # original vs poisson with different param values
-    print("Comparison: poisson with different param values")
-    for value in consts.GAMMAS:
-        print(f"Gamma: {value}")
-        call_comparison(original_image, poisson_result_holder, noise_type = "poisson", gamma = value)
+        # original vs poisson with different param values
+        print("Comparison: poisson with different param values")
+        for value in consts.GAMMAS:
+            print(f"Gamma: {value}")
+            call_comparison(image, poisson_result_holder, noise_type = "poisson", gamma = value)
 
-    # plotting the results
-    pt.create_plots_from_object(poisson_result_holder, consts.GAMMAS, "gamma", "poisson")
+        # plotting the results
+        pt.create_plots_from_object(poisson_result_holder, consts.GAMMAS, "gamma", "poisson")
 
-    # original vs salt&pepper + 180 rotation with different pixel values to transform
-    print("Comparison: salt&pepper + 180 rotation with different param values")
-    for value in consts.PIXELS_TO_TRANSFORM:
-        print(f"Number of pixels to transform: {value}")
-        call_comparison(original_image, salt_pepper_with_rotation_result_holder, rotate = True, noise_type = "salt&pepper", number_of_pixels_to_transform = value)
+        # # original vs salt&pepper + 180 rotation with different pixel values to transform
+        # print("Comparison: salt&pepper + 180 rotation with different param values")
+        # for value in consts.PIXELS_TO_TRANSFORM:
+        #     print(f"Number of pixels to transform: {value}")
+        #     call_comparison(original_image, salt_pepper_with_rotation_result_holder, rotate = True, noise_type = "salt&pepper", number_of_pixels_to_transform = value)
 
-    # plotting the results
-    pt.create_plots_from_object(salt_pepper_with_rotation_result_holder, consts.PIXELS_TO_TRANSFORM, "pixels transformed", "salt&pepper with rotation")
+        # # plotting the results
+        # pt.create_plots_from_object(salt_pepper_with_rotation_result_holder, consts.PIXELS_TO_TRANSFORM, "pixels transformed", "salt&pepper with rotation")
 
-    # original vs gaussian + 180 rotation with different param values
-    print("Comparison: gaussian with different param values")
-    for i in range(8):
-        print(f"Mean: {consts.MEANS[i]}, sigma: {consts.SIGMAS[i]}")
-        call_comparison(original_image, gaussian_with_rotation_result_holder, rotate = True, noise_type = "gaussian", mean = consts.MEANS[i], sigma = consts.SIGMAS[i])
+        # # original vs gaussian + 180 rotation with different param values
+        # print("Comparison: gaussian with different param values")
+        # for i in range(8):
+        #     print(f"Mean: {consts.MEANS[i]}, sigma: {consts.SIGMAS[i]}")
+        #     call_comparison(original_image, gaussian_with_rotation_result_holder, rotate = True, noise_type = "gaussian", mean = consts.MEANS[i], sigma = consts.SIGMAS[i])
 
-    # plotting the results
-    pt.create_plots_from_object(gaussian_with_rotation_result_holder, consts.MEANS, "means", "gaussian with rotation", consts.SIGMAS, "sigma")
+        # # plotting the results
+        # pt.create_plots_from_object(gaussian_with_rotation_result_holder, consts.MEANS, "means", "gaussian with rotation", consts.SIGMAS, "sigma")
 
-    # original vs poisson + 180 rotation with different param values
-    print("Comparison: poisson with different param values")
-    for value in consts.GAMMAS:
-        print(f"Gamma: {value}")
-        call_comparison(original_image, poisson_with_rotation_result_holder, rotate = True, noise_type = "poisson", gamma = value)
+        # # original vs poisson + 180 rotation with different param values
+        # print("Comparison: poisson with different param values")
+        # for value in consts.GAMMAS:
+        #     print(f"Gamma: {value}")
+        #     call_comparison(original_image, poisson_with_rotation_result_holder, rotate = True, noise_type = "poisson", gamma = value)
 
-    # plotting the results
-    pt.create_plots_from_object(poisson_with_rotation_result_holder, consts.GAMMAS, "gamma", "poisson with rotation")
+        # # plotting the results
+        # pt.create_plots_from_object(poisson_with_rotation_result_holder, consts.GAMMAS, "gamma", "poisson with rotation")
 
 
 

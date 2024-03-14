@@ -3,9 +3,11 @@ import numpy as np
 import utils.noise_tools as noise_tools
 import imutils
 
-def load_image(image_to_load: str) -> np.ndarray:
+def load_image(image_to_load: str, image_name: str = "test") -> np.ndarray:
     original = cv2.imread(image_to_load)
     global original_image
+    global current_image_name
+    current_image_name = image_name
     original_image = original
     return original
 
@@ -49,5 +51,5 @@ def create_rotated_image(image: np.ndarray, angle: int) -> np.ndarray:
   return imutils.rotate(image, angle)
 
 def save_image(image: np.ndarray, path: str) -> None:
-    print("path: " + path)
+    # print("path: " + path)
     cv2.imwrite(path, image)

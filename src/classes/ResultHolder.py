@@ -1,7 +1,8 @@
 class ResultHolder:
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, image_name: str) -> None:
         self.name = name
+        self.image_name = image_name
         self.mse_results = list()
         self.ergas_results = list()
         self.psnr_results = list()
