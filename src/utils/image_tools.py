@@ -51,3 +51,40 @@ def create_rotated_image(image: np.ndarray, angle: int) -> np.ndarray:
 def save_image(image: np.ndarray, path: str) -> None:
     print("path: " + path)
     cv2.imwrite(path, image)
+
+# noise combos
+def blur_with_salt_and_pepper(image: np.ndarray, kernel: list, pixels_to_transform: int, file_name: str) -> np.ndarray:
+    blurred = noise_tools.blur(image, kernel)
+    combo = noise_tools.salt_and_pepper(blurred, pixels_to_transform)
+    save_image(combo, file_name)
+    return combo
+
+def rotated_with_salt_and_pepper(image: np.ndarray, angle: int, pixels_to_transform: int, file_name: str) -> np.ndarray:
+    rotated = create_rotated_image(image, angle)
+    combo = noise_tools.salt_and_pepper(rotated, pixels_to_transform)
+    save_image(combo, file_name)
+    return combo
+
+def rotated_with_blur(image: np.ndarray, angle: int, kernel: list, file_name: str) -> np.ndarray:
+    rotated = create_rotated_image(image, angle)
+    combo = noise_tools.blur(rotated, kernel)
+    save_image(combo, file_name)
+    return combo
+
+def rotated_with_contrast(image: np.ndarray, angle: int, alpha: float, file_name: str) -> np.ndarray:
+    rotated = create_rotated_image(image, angle)
+    combo = noise_tools.contrast(rotated, alpha)
+    save_image(combo, file_name)
+    return combo
+
+def saturation_with_salt_and_pepper(image: np.ndarray, percent: float, pixels_to_transform: int, file_name: str) -> np.ndarray:
+    saturated = noise_tools.saturation(image, percent)
+    combo = noise_tools.salt_and_pepper(saturated, pixels_to_transform)
+    save_image(combo, file_name)
+    return combo
+
+def fade_with_contrast(image: np.ndarray, percent: float, alpha: float, file_name: str) -> np.ndarray:
+    faded = noise_tools.fade(image, percent)
+    combo = noise_tools.contrast(faded, alpha)
+    save_image(combo, file_name)
+    return combo
