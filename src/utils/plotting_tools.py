@@ -89,6 +89,6 @@ def create_plots_from_object(result_holder: ResultHolder, param_consts: list, pa
 def save_plot(file_name: str) -> None:
     metric = file_name.split('_')[1]
     if metric == "ms":
-        plt.savefig("results/ms_ssim/" + file_name)
+        plt.savefig("kadid_results/ms_ssim/" + file_name)
     else:
-        plt.savefig("results/" + file_name.split('_')[1] + "/" + file_name)
+        plt.savefig("kadid_results/" + file_name.split('_')[1] + "/" + file_name)

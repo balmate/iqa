@@ -20,15 +20,17 @@ def main():
         image = image_tools.load_image(image_path, image_name)
         image_tools.show_image(image_name, image)
 
-    # create result holders for plotting
+        # create result holders for plotting
         rotation_result_holder = ResultHolder("rotations", image_name)
         salt_pepper_result_holder = ResultHolder("salt&pepper", image_name)
         gaussian_result_holder = ResultHolder("gaussian", image_name)
-        poisson_result_holder = ResultHolder("poisson", image_name)
+        # poisson_result_holder = ResultHolder("poisson", image_name)
         blur_result_holder = ResultHolder("blur", image_name)
         fade_result_holder = ResultHolder("fade", image_name)
-        saturation_result_holder = ResultHolder("saturation", image_name)
-        contrast_result_holder = ResultHolder("contrast", image_name)
+        saturation_low_result_holder = ResultHolder("saturation_low", image_name)
+        saturation_high_result_holder = ResultHolder("saturation_high", image_name)
+        contrast_dark_result_holder = ResultHolder("contrast_dark", image_name)
+        contrast_light_result_holder = ResultHolder("contrast_light", image_name)
         zoom_result_holder = ResultHolder("zoom", image_name)
         # salt_pepper_with_rotation_result_holder = ResultHolder("salt&pepper + 180 rotation")
         # gaussian_with_rotation_result_holder = ResultHolder("gaussian + 180 rotation")
@@ -37,8 +39,6 @@ def main():
         # # original vs rotated
         # print("Comparison: original vs 180 rotated")
         # call_comparison(original_image, rotate = True)
-
-
 
         # original vs zoomed
         print("Comparison: zoom with different param values")
@@ -50,22 +50,40 @@ def main():
         pt.create_plots_from_object(zoom_result_holder, consts.ZOOM_VALUES, "zoom values", "zoom")
 
         # original vs saturated
-        print("Comparison: contrast with different param values")
-        for alpha in consts.ALPHAS:
+        print("Comparison: contrast (dark) with different param values")
+        for alpha in consts.CONTRAST_DARK:
             print(f"Contrast value: {alpha}")
-            call_comparison(image, contrast_result_holder, noise_type = "contrast", alpha = alpha)
+            call_comparison(image, contrast_dark_result_holder, noise_type = "contrast", alpha = alpha)
 
         # plotting the results
-        pt.create_plots_from_object(contrast_result_holder, consts.ALPHAS, "contrast values", "contrast")
+        pt.create_plots_from_object(contrast_dark_result_holder, consts.CONTRAST_DARK, "contrast (dark) values", "contrast_dark")
 
         # original vs saturated
-        print("Comparison: saturation with different param values")
-        for percent in consts.SATURATION_VALUES:
-            print(f"Saturation value: {percent}")
-            call_comparison(image, saturation_result_holder, noise_type = "saturation", saturation = percent)
+        print("Comparison: contrast (light) with different param values")
+        for alpha in consts.CONTRAST_LIGHT:
+            print(f"Contrast value: {alpha}")
+            call_comparison(image, contrast_light_result_holder, noise_type = "contrast", alpha = alpha)
 
         # plotting the results
-        pt.create_plots_from_object(saturation_result_holder, consts.SATURATION_VALUES, "saturation values", "saturation")
+        pt.create_plots_from_object(contrast_light_result_holder, consts.CONTRAST_LIGHT, "contrast (light) values", "contrast_light")
+
+        # original vs saturated
+        print("Comparison: saturation (low) with different param values")
+        for percent in consts.SATURATION_LOW:
+            print(f"Saturation (low) value: {percent}")
+            call_comparison(image, saturation_low_result_holder, noise_type = "saturation", saturation = percent)
+
+        # plotting the results
+        pt.create_plots_from_object(saturation_low_result_holder, consts.SATURATION_LOW, "saturation (low) values", "saturation_low")
+
+        # original vs saturated
+        print("Comparison: saturation (high) with different param values")
+        for percent in consts.SATURATION_HIGH:
+            print(f"Saturation (high) value: {percent}")
+            call_comparison(image, saturation_high_result_holder, noise_type = "saturation", saturation = percent)
+
+        # plotting the results
+        pt.create_plots_from_object(saturation_high_result_holder, consts.SATURATION_HIGH, "saturation (high) values", "saturation_high")
 
         # original vs faded
         print("Comparison: fade with different param values")
@@ -105,21 +123,21 @@ def main():
 
         # original vs gaussian with different param values
         print("Comparison: gaussian with different param values")
-        for i in range(8):
+        for i in range(5):
             print(f"Mean: {consts.MEANS[i]}, sigma: {consts.SIGMAS[i]}")
             call_comparison(image, gaussian_result_holder, noise_type = "gaussian", mean = consts.MEANS[i], sigma = consts.SIGMAS[i])
 
         # plotting the results
         pt.create_plots_from_object(gaussian_result_holder, consts.MEANS, "mean", "gaussian", consts.SIGMAS, "sigma")
 
-        # original vs poisson with different param values
-        print("Comparison: poisson with different param values")
-        for value in consts.GAMMAS:
-            print(f"Gamma: {value}")
-            call_comparison(image, poisson_result_holder, noise_type = "poisson", gamma = value)
+        # # original vs poisson with different param values
+        # print("Comparison: poisson with different param values")
+        # for value in consts.GAMMAS:
+        #     print(f"Gamma: {value}")
+        #     call_comparison(image, poisson_result_holder, noise_type = "poisson", gamma = value)
 
-        # plotting the results
-        pt.create_plots_from_object(poisson_result_holder, consts.GAMMAS, "gamma", "poisson")
+        # # plotting the results
+        # pt.create_plots_from_object(poisson_result_holder, consts.GAMMAS, "gamma", "poisson")
 
         # # original vs salt&pepper + 180 rotation with different pixel values to transform
         # print("Comparison: salt&pepper + 180 rotation with different param values")
