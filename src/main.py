@@ -6,8 +6,23 @@ import utils.plotting_tools as pt
 from classes.ResultHolder import ResultHolder
 from utils import consts
 import os
+import utils.data_tools as dt
 
 def main():
+    # metric testing
+    # image_processing()
+    # model training
+    model_processing()
+
+
+def model_processing():
+    data = dt.kadid_data()
+    images = image_tools.get_kadid_images()
+    dt.compile_model(images, data)
+    return
+
+
+def image_processing():
     # original_image = image_tools.load_image('../assets/nature.jpg')
     # image_tools.show_image("original", original_image)
 
@@ -165,7 +180,6 @@ def main():
 
         # # plotting the results
         # pt.create_plots_from_object(poisson_with_rotation_result_holder, consts.GAMMAS, "gamma", "poisson with rotation")
-
 
 
 def call_comparison(image: np.ndarray, result_holder: ResultHolder, rotate: bool = False, angle: int = 180, noise_type: str = "", number_of_pixels_to_transform: int = 15000, mean: float = 0.5, sigma: int = 100,

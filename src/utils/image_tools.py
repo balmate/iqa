@@ -1,7 +1,9 @@
+import os
 import cv2
 import numpy as np
 import utils.noise_tools as noise_tools
 import imutils
+from keras.preprocessing.image import load_img, img_to_array
 
 def load_image(image_to_load: str, image_name: str = "test") -> np.ndarray:
     original = cv2.imread(image_to_load)
@@ -53,3 +55,18 @@ def create_rotated_image(image: np.ndarray, angle: int) -> np.ndarray:
 def save_image(image: np.ndarray, path: str) -> None:
     # print("path: " + path)
     cv2.imwrite(path, image)
+
+def get_kadid_images():
+    # ONLY FOR LOCALE TESTING (with all of the images the source would be too big)
+    path_to_images = 'C:\images'
+    images = []
+    for image_file in os.listdir(path_to_images):
+        image_path = os.path.join(path_to_images, image_file)
+        # image = img_to_array(load_img(image_path, color_mode='rgb', target_size=(192, 256)), dtype=np.uint8) / 255.0 # it worked with this
+        # load as ndarray
+        image = img_to_array(load_image(image_path), dtype=np.uint8)
+        # rescale image, and normalize it
+        image = img_to_array(cv2.resize(image, (256, 192), interpolation=cv2.INTER_AREA), dtype=np.uint8) / 255.0
+        images.append(image)
+
+    return np.array(images)
