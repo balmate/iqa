@@ -3,7 +3,9 @@ import cv2
 import numpy as np
 import utils.noise_tools as noise_tools
 import imutils
-from keras.preprocessing.image import load_img, img_to_array
+from keras.preprocessing.image import img_to_array
+import metrics.metrics_comparisons as mc
+import classes.ImageMetricHolder as ImageMetricHolder
 
 def load_image(image_to_load: str, image_name: str = "test") -> np.ndarray:
     original = cv2.imread(image_to_load)
@@ -22,7 +24,7 @@ def resize_to_original(image_to_resize: np.ndarray) -> np.ndarray:
     return cv2.resize(image_to_resize, (original_image.shape[1], original_image.shape[0]))
 
 def show_image(window_title: str, image: np.ndarray) -> None:
-    return
+    # return
     cv2.imshow(window_title, image)
     cv2.waitKey(0)
 
@@ -70,3 +72,23 @@ def get_kadid_images():
         images.append(image)
 
     return np.array(images)
+
+def get_kadid_images_with_metric_values(metric: str) -> ImageMetricHolder.ImageMetricHolder:
+    # ONLY FOR LOCALE TESTING (with all of the images the source would be too big)
+    path_to_images = 'C:\images'
+    data = ImageMetricHolder.ImageMetricHolder()
+    print("Reading images and values...")
+    for image_file in os.listdir(path_to_images):
+        image_path = os.path.join(path_to_images, image_file)
+        # image = img_to_array(load_img(image_path, color_mode='rgb', target_size=(192, 256)), dtype=np.uint8) / 255.0 # it worked with this
+        # load as ndarray
+        image = img_to_array(load_image(image_path), dtype=np.uint8)
+        # rescale image, and normalize it
+        # get the original image
+        original_image_path = "../assets/kadid_ref_images/" + image_file.split('_')[0] + ".png"
+        metric_value = mc.call_prints(load_image(original_image_path), image, metric, "original")
+        image = img_to_array(cv2.resize(image, (256, 192), interpolation=cv2.INTER_AREA), dtype=np.uint8) / 255.0
+        data.images.append(image)
+        data.metric_values.append(metric_value)
+
+    return data
