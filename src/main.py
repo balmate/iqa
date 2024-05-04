@@ -20,11 +20,13 @@ def model_processing():
     metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
     for metric in metrics:
         data = image_tools.get_kadid_images_with_metric_values(metric)
-        # for i in range(10):
-        #     image_tools.show_image(str(i), data.images[i])
-        #     print(data.metric_values[i])
-        print("Transforming datas to np arrays...")
-        dt.compile_model(np.array(data.images), np.array(data.metric_values), metric)
+    # for i in range(10):
+    #     image_tools.show_image(str(i), data.images[i])
+    #     print(data.metric_values[i])
+    print("save data to csv")
+    dt.convert_to_dataframe_and_save_to_csv(data)
+    print("Transforming datas to np arrays...")
+    dt.compile_model_with_values(np.array(data.metric_values), np.array(data.dmos))
     return
 
 

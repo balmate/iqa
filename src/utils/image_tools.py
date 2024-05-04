@@ -1,11 +1,15 @@
 import os
 import cv2
 import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 import utils.noise_tools as noise_tools
 import imutils
 from keras.preprocessing.image import img_to_array
 import metrics.metrics_comparisons as mc
 import classes.ImageMetricHolder as ImageMetricHolder
+import classes.MetricHolder as MetricHolder
+import pandas as pd
 
 def load_image(image_to_load: str, image_name: str = "test") -> np.ndarray:
     original = cv2.imread(image_to_load)
@@ -73,10 +77,13 @@ def get_kadid_images():
 
     return np.array(images)
 
-def get_kadid_images_with_metric_values(metric: str) -> ImageMetricHolder.ImageMetricHolder:
+def get_kadid_images_with_metric_values(metric: str) -> MetricHolder.MetricHolder:
     # ONLY FOR LOCALE TESTING (with all of the images the source would be too big)
+    # metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
     path_to_images = 'C:\images'
-    data = ImageMetricHolder.ImageMetricHolder()
+    dmos_values = pd.read_csv("./csvs/dmos.csv", on_bad_lines='skip')["dmos"]
+    data = MetricHolder.MetricHolder()
+    df = pd.DataFrame(columns=[metric])
     print("Reading images and values...")
     for image_file in os.listdir(path_to_images):
         image_path = os.path.join(path_to_images, image_file)
@@ -86,9 +93,16 @@ def get_kadid_images_with_metric_values(metric: str) -> ImageMetricHolder.ImageM
         # rescale image, and normalize it
         # get the original image
         original_image_path = "../assets/kadid_ref_images/" + image_file.split('_')[0] + ".png"
-        metric_value = mc.call_prints(load_image(original_image_path), image, metric, "original")
-        image = img_to_array(cv2.resize(image, (256, 192), interpolation=cv2.INTER_AREA), dtype=np.uint8) / 255.0
-        data.images.append(image)
-        data.metric_values.append(metric_value)
-
+        # data.metric_values.append([mc.call_prints(load_image(original_image_path), image, "mse", "original"), 
+        #                            mc.call_prints(load_image(original_image_path), image, "ergas", "original"),
+        #                            mc.call_prints(load_image(original_image_path), image, "psnr", "original")])
+        metric_val = mc.call_prints(load_image(original_image_path), image, metric, "original")
+        data.dmos.append(dmos_values[i])
+        # print(f"metric values: {data.metric_values[i]}")
+        # print(f"dmos value: {data.dmos[i]}")
+        df = df._append({metric: metric_val}, ignore_index=True)
+    print(f"{metric} values:")
+    print(df)
+    df.to_csv(f"csvs/{metric}_values.csv")
     return data
+    
