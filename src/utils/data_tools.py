@@ -28,6 +28,9 @@ def concat_data(kadid_values: pd.Series, csiq_values: pd.Series) -> pd.Series:
 def convert_to_dataframe_and_save_to_csv(data: MetricHolder.MetricHolder):
     df = pd.DataFrame({'': data.metric_values[0]})
 
+def get_metric_values_from_csv(metric: str) -> pd.Series:
+    return read_data(f"./csvs/{metric}_values.csv", metric)
+
 def compile_model(images: np.ndarray, values: np.ndarray, metric: str):
     # scale values
     print("Scaleing label values...")
@@ -98,13 +101,16 @@ def compile_model(images: np.ndarray, values: np.ndarray, metric: str):
     plt.savefig(f"ai_results/{metric}_result.jpg")
 
 
-def compile_model_with_values(values: np.array, labels: np.array):
-
+def compile_model_with_values(values: np.array, labels: np.array, metric: str):
+    for i in range(len(values)):
+        if math.isnan(values[i]):
+            values[i] = 0.0
+            print("value changed")
     train_values, test_values, train_labels, test_labels = train_test_split(values, labels, test_size=0.15, random_state=42)
 
     # create the model
     model = models.Sequential()
-    model.add(layers.Dense(256, input_dim=3, activation='linear'))
+    model.add(layers.Dense(256, input_dim=1, activation='linear'))
     model.add(layers.Dense(256, activation='linear'))
     model.add(layers.Dense(1, activation='linear'))
 
@@ -116,14 +122,14 @@ def compile_model_with_values(values: np.array, labels: np.array):
                 loss='mse',
                 metrics=['mae'])
     
-    history = model.fit(train_values, train_labels, epochs=100, batch_size=64, verbose=1)
+    history = model.fit(train_values, train_labels, epochs=50, batch_size=64, verbose=1)
 
     # evaluate model
     score = model.evaluate(test_values, test_labels, verbose=1)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    print("Predicting...")
+    print(f"Predicting {metric} values...")
     predictions = model.predict(test_values, verbose=1)
     # show 200 predictions for reference...
     # for i in range (50):
@@ -142,6 +148,6 @@ def compile_model_with_values(values: np.array, labels: np.array):
     plt.xlabel('True Values', fontsize=10)
     plt.ylabel('Predictions', fontsize=10)
     plt.axis('equal')
-    plt.title("mse, ergas, psnr")
-    plt.savefig("ai_results/mse_ergas_psnr_result.jpg")
-    plt.show()
+    plt.title(f"{metric}, accuracy: {score[1]}")
+    plt.savefig(f"ai_results_with_values/{metric}_results.jpg")
+    # plt.show()
