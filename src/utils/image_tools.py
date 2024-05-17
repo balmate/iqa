@@ -28,7 +28,6 @@ def resize_to_original(image_to_resize: np.ndarray) -> np.ndarray:
     return cv2.resize(image_to_resize, (original_image.shape[1], original_image.shape[0]))
 
 def show_image(window_title: str, image: np.ndarray) -> None:
-    # return
     cv2.imshow(window_title, image)
     cv2.waitKey(0)
 
@@ -83,8 +82,9 @@ def get_kadid_images_with_metric_values(metric: str) -> MetricHolder.MetricHolde
     path_to_images = 'C:\images'
     dmos_values = pd.read_csv("./csvs/dmos.csv", on_bad_lines='skip')["dmos"]
     data = MetricHolder.MetricHolder()
+    i = 0
     df = pd.DataFrame(columns=[metric])
-    print("Reading images and values...")
+    print(f"Reading images and values for metric: {metric}...")
     for image_file in os.listdir(path_to_images):
         image_path = os.path.join(path_to_images, image_file)
         # image = img_to_array(load_img(image_path, color_mode='rgb', target_size=(192, 256)), dtype=np.uint8) / 255.0 # it worked with this
@@ -96,13 +96,15 @@ def get_kadid_images_with_metric_values(metric: str) -> MetricHolder.MetricHolde
         # data.metric_values.append([mc.call_prints(load_image(original_image_path), image, "mse", "original"), 
         #                            mc.call_prints(load_image(original_image_path), image, "ergas", "original"),
         #                            mc.call_prints(load_image(original_image_path), image, "psnr", "original")])
+        print("metric val added")
         metric_val = mc.call_prints(load_image(original_image_path), image, metric, "original")
         data.dmos.append(dmos_values[i])
         # print(f"metric values: {data.metric_values[i]}")
         # print(f"dmos value: {data.dmos[i]}")
         df = df._append({metric: metric_val}, ignore_index=True)
+        i += 1
     print(f"{metric} values:")
-    print(df)
-    df.to_csv(f"csvs/{metric}_values.csv")
+    # print(df)
+    # print(f"saving data to {metric} file")
+    # df.to_csv(f"csvs/{metric}_values.csv", mode='a', header=False)
     return data
-    

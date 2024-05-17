@@ -1,4 +1,6 @@
+import math
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 import utils.image_tools as image_tools
 import utils.noise_tools as noise_tools
 import metrics.metrics_comparisons as mcc
@@ -13,19 +15,71 @@ def main():
     # metric testing
     # image_processing()
     # model training
-    model_processing()
+    model_processing_one_by_one()
+    dt.compile_model_with_all_metrics()
+    # model_processing_by_groups()
 
 
-def model_processing():
-    # data = dt.kadid_data()
-    metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
-    print("Getting dmos values from kadid csv")
+def model_processing_by_groups():
+    metric_combos2 = [["mse", "ergas", "psnr"], ["ssim", "ms-ssim"], ["vif", "scc", "sam"]]
+    scaler = MinMaxScaler(feature_range=(0.0, 1.0))
     data = MetricHolder.MetricHolder()
     data.dmos = dt.kadid_data()
+    for metrics in metric_combos2:
+        if len(metrics) == 2:
+            ssim_data = np.array(dt.get_metric_values_from_csv("ssim"))
+            ms_ssim_data = np.array(dt.get_metric_values_from_csv("ms-ssim"))
+
+            for i in range(len(ssim_data)):
+                if math.isnan(ssim_data[i]): ssim_data[i] = 0.0
+                elif math.isnan(ms_ssim_data[i]): ms_ssim_data[i] = 0.0
+                data.metric_values.append([ssim_data[i], ms_ssim_data[i]])
+        else:
+            data0 = np.array(dt.get_metric_values_from_csv(metrics[0]))
+            data1 = np.array(dt.get_metric_values_from_csv(metrics[1]))
+            data2 = np.array(dt.get_metric_values_from_csv(metrics[2]))
+
+            for i in range(len(data0)):
+                if math.isnan(data0[i]): data0[i] = 0.0
+                elif math.isnan(data1[i]): data1[i] = 0.0
+                elif math.isnan(data2[i]): data2[i] = 0.0
+                data.metric_values.append([data0[i], data1[i], data2[i]])
+
+        dt.compile_concrete_model_with_values(np.array(data.metric_values), data.dmos, metrics, len(metrics))
+        data.metric_values = []
+
+def model_processing_one_by_one():
+    # metric_combos1 = [["mse", "ergas", "psnr"], ["ssim", "ms-ssim", "vif"], ["scc", "sam", "ergas"], ["mse", "ssim", "scc"], ["ms-ssim", "scc", "sam"]]
+    # metric_combos2 = [["ssim", "ergas", "psnr"], ["mse", "ms-ssim", "vif"], ["ssim", "sam", "ergas"], ["sam", "ms-ssim", "scc"], ["ms-ssim", "vif", "ergas"]]
+    metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
+
+    data = MetricHolder.MetricHolder()
+    print("Getting dmos values from kadid csv")
+    data.dmos = dt.kadid_data()
     for metric in metrics:
-        print(f"Getting {metric} values from csv")
-        data.metric_values = np.array(dt.get_metric_values_from_csv(metric))
-        dt.compile_model_with_values(np.array(data.metric_values), data.dmos, metric)
+        print(f"Getting data and compiling model for {metric} metric...")
+        dt.compile_model_by_one_metric(metric)
+        # data0 = np.array(dt.get_metric_values_from_csv(metric[0]))
+        # data1 = np.array(dt.get_metric_values_from_csv(metric[1]))
+        # data2 = np.array(dt.get_metric_values_from_csv(metric[2]))
+
+        # # data.metric_values = np.array(dt.get_metric_values_from_csv(metric))
+
+        # for i in range(len(data0)):
+        #     if math.isnan(data0[i]) :
+        #         data0[i] = 0.0
+        #     elif math.isnan(data1[i]):
+        #         data1[i] = 0.0
+        #     elif math.isnan(data2[i]):
+        #         data2[i] = 0.0
+        #     data.metric_values.append([data0[i], data1[i], data2[i]])
+
+        # # for i in range(len(data.metric_values)):
+        # #     if math.isnan(data.metric_values[i]):
+        # #         data.metric_values[i] = 0.0
+        # # print(data.metric_values[1])
+        # dt.compile_model_with_values(scaler.fit_transform(np.array(data.metric_values).reshape(-1, 1)), data.dmos, metric)
+        # data.metric_values = []
     return
 
 
