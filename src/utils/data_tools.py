@@ -9,41 +9,35 @@ import matplotlib.pyplot as plt
 import classes.MetricHolder as MetricHolder
 from matplotlib.patches import Rectangle
 
-def create_data():
-    # read both csvs data
-    all_values = concat_data(read_data('./csvs/dmos.csv', 'dmos', True), read_data('./csvs/csiq_dmos.csv', 'dmos'))
-    return all_values
-
 def read_data(file_path: str, col: str, normalize: bool = False) -> pd.Series:
+    '''
+    Reads the specified data column from the specified csv file, and return it as a numpy array.
+    '''
     # read concrete csv's dmos col, skip bad lines
     values = pd.read_csv(file_path, on_bad_lines='skip')[col]
     return np.array(values)
 
 def kadid_data():
+    '''
+    Reads all the DMOS scores from the kadid csv file.
+    '''
     # return kadid csvs dmos data
     return read_data('./csvs/dmos.csv', 'dmos')
 
-def concat_data(kadid_values: pd.Series, csiq_values: pd.Series) -> pd.Series:
-    return pd.concat([kadid_values, csiq_values])
-
-def convert_to_dataframe_and_save_to_csv(data: MetricHolder.MetricHolder):
-    df = pd.DataFrame({'': data.metric_values[0]})
-
 def get_metric_values_from_csv(metric: str) -> pd.Series:
+    '''
+    Reads all the calculated metric values from the specific csv file.
+    '''
     return read_data(f"./csvs/{metric}_values.csv", metric)
 
 def compile_model(images: np.ndarray, values: np.ndarray, metric: str):
+    '''
+    Creates, compiles and evaluates a convolution neural network by the transformed images of the kadid dataset.
+    '''
     # scale values
     print("Scaleing label values...")
     scaler = MinMaxScaler()
     values_scaled = scaler.fit_transform(values.reshape(-1, 1))
-
-    # for i in range(len(values_scaled)):
-    #     if math.isnan(values_scaled[i]):
-    #         values_scaled[i] = 0.0
-    
-    # for i in range(10):
-    #     print (values_scaled[i])
 
     # divide data to test and train sets
     print("Splitting data to train and test sets...")
@@ -62,37 +56,31 @@ def compile_model(images: np.ndarray, values: np.ndarray, metric: str):
     model.add(layers.Dense(1, activation='linear'))
     model.summary()
     
+    # compile the model
     print('compile...\n')
     model.compile(optimizer='adam',
                 loss='mse',
                 metrics=['mae'])
 
+    # train the model
     print(f'train by {metric} metric...\n')
     train_images = train_images.astype(np.float16)
     history = model.fit(train_images, train_labels, epochs=3, batch_size=64, verbose=1)
 
-    # TODO: plotting accuracy, loss, or other information about the history
-
+    # evaluating model
     print("Evaluating model...")
     score = model.evaluate(test_images, test_labels)
     print('Test Loss:', score[0])
     print('Test accuracy:', score[1])
 
+    # predictions
     print("Predicting...")
     predictions = model.predict(test_images, verbose=1)
-    # show 200 predictions for reference...
-    # for i in range (50):
-    #     print(f"prediction: {predictions[i]} real value: {test_labels[i]}")
 
     # plot predicions and correct values
     plt.figure(figsize=(10,10),)
     plt.scatter(test_labels, predictions, c='crimson', alpha=0.5)
 
-    # p1 = max(max(predictions), max(test_labels))
-    # p2 = min(min(predictions), min(test_labels))
-    # if hasattr(p1, "__len__"): p1 = p1[0]
-    # if hasattr(p2, "__len__"): p2 = p2[0]
-    # print(f"p1: {p1}, p2: {p2}")
     plt.plot([0, 1], [0, 1], 'b-')
     plt.xlabel('True Values', fontsize=10)
     plt.ylabel('Predictions', fontsize=10)
@@ -103,6 +91,9 @@ def compile_model(images: np.ndarray, values: np.ndarray, metric: str):
 
 
 def compile_concrete_model_with_values(values: np.array, labels: np.array, metric: str, input_dim: int = 1):
+    '''
+    Creates, compiles and evaluates a dense neural network by the metric values calculated before on the kadid transformed images.
+    '''
     # separate data to train and test sets
     train_values, test_values, train_labels, test_labels = train_test_split(values, labels, test_size=0.12)
     
@@ -114,10 +105,6 @@ def compile_concrete_model_with_values(values: np.array, labels: np.array, metri
     else:
         train_values = scaler.fit_transform(train_values.reshape(-1, 1))
         test_values = scaler.fit_transform(test_values.reshape(-1, 1))
-
-    # normalize labels
-    # train_labels = scaler.fit_transform(train_labels.reshape(-1, 1))
-    # test_labels = scaler.fit_transform(test_labels.reshape(-1, 1))
 
     # create the model
     model = models.Sequential()
@@ -133,32 +120,28 @@ def compile_concrete_model_with_values(values: np.array, labels: np.array, metri
                 loss='mae',
                 metrics=['mae'])
 
-    # train
-    history = model.fit(train_values, train_labels, epochs=70, verbose=0)
+    # train model
+    history = model.fit(train_values, train_labels, epochs=70, verbose=1)
 
     # evaluate model
-    score = model.evaluate(test_values, test_labels, verbose=0)
+    score = model.evaluate(test_values, test_labels, verbose=1)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
+    # predictions
     print(f"Predicting {metric} values...")
-    predictions = model.predict(test_values, verbose=0)
-    # print(f"Predictions len: {len(predictions)}")
-    # show 200 predictions for reference...
-    # for i in range(len(predictions)):
-    #     if round(predictions[i].item(), 2) == test_labels[i]:
-            # print(f"match prediction: {round(predictions[i].item(), 2)}, true value: {test_labels[i]}")
+    predictions = model.predict(test_values, verbose=1)
 
+    # create thresholds, then evaluate model by these (partly as a confusion matrix)
     thresholds = [0.3, 0.5, 1]
     calculate_confusion_matrix(predictions, test_labels, thresholds, metric)
-    # set threshold for predictions
+
+    # set threshold for predictions, display this accuracy on the plot
     threshold = 0.3
     accepted_predictions = []
     for i in range(len(predictions)):
         if np.abs(predictions[i] - test_labels[i]) <= threshold:
             accepted_predictions.append(predictions[i])
-            # print(f"accepted prediction: {predictions[i]} vs true value {test_labels[i]}")
-    # print(len(accepted_predictions))
     modified_accuracy = len(accepted_predictions) / len(predictions)
 
     # plot predicions and correct values
@@ -166,6 +149,7 @@ def compile_concrete_model_with_values(values: np.array, labels: np.array, metri
     ax = plt.gca()
     plt.scatter(test_labels, predictions, c='crimson', alpha=0.5)
 
+    # create a rectangle to illustrate threshold area
     r = Rectangle(xy=(0.9, 1), width=0.2, height=5.7, angle=-45, rotation_point=(1,1), fill=False, alpha=1)
     ax.add_patch(r)
     plt.plot()
@@ -177,6 +161,9 @@ def compile_concrete_model_with_values(values: np.array, labels: np.array, metri
     # plt.show()
 
 def compile_model_with_all_metrics():
+    '''
+    Prepare all calculated metric values for model training.
+    '''
     # normalizer
     data = MetricHolder.MetricHolder()
     # get dmos scores
@@ -210,11 +197,16 @@ def compile_model_with_all_metrics():
             sam[i] = 0.0
         elif math.isnan(scc[i]):
             scc[i] = 0.0
+        # append values to data holder
         data.metric_values.append([mse[i].item(), ergas[i].item(), psnr[i].item(), ssim[i].item(), ms_ssim[i].item(), vif[i].item(), sam[i].item(), scc[i].item()])
 
+    # compile and evaluate the model
     compile_concrete_model_with_values(np.array(data.metric_values), data.dmos, "all", 8)
 
 def compile_model_by_one_metric(metric: str):
+    '''
+    Prepare a specific calculated metric value for model training.
+    '''
     # normalizer
     scaler = MinMaxScaler(feature_range=(0.0, 1.0))
     data = MetricHolder.MetricHolder()
@@ -224,16 +216,18 @@ def compile_model_by_one_metric(metric: str):
     # get values for proper metric
     data.metric_values = scaler.fit_transform(np.array(get_metric_values_from_csv(metric)).reshape(-1, 1))
 
+    # check for NaN values
     for i in range(len(data.metric_values)):
-        # print(data.metric_values[i])
         if math.isnan(data.metric_values[i]):
             data.metric_values[i] = 0.0
-            # print("NaN found!")
     
-    # compile model
+    # compile and evaluate model
     compile_concrete_model_with_values(np.array(data.metric_values), data.dmos, metric)
 
 def calculate_confusion_matrix(predictions, true_values, thresholds,metric):
+    '''
+    Function to calculate accepted accuracies of the model by different threshold values
+    '''
     print(f"total predictions: {len(predictions)}, current metric: {metric}")
     # do fo all thresholds
     for threshold in thresholds:
@@ -271,3 +265,42 @@ def calculate_confusion_matrix(predictions, true_values, thresholds,metric):
         print(f"threshold matches ABOVE the true value: {len(threshold_matches_all)}")
         print(f"differents: {len(differents)}")
         print(f"accepted accuracy: {accepted_accuracy}%\nfull accuracy in threshold: {full_accuracy_in_threshold}%")
+
+def model_processing_by_groups():
+    '''
+    Function to do the whole training process from data preparation to model evaluation by groups of metrics.
+    '''
+    metric_combos2 = [["mse", "ergas", "psnr"], ["ssim", "ms-ssim"], ["vif", "scc", "sam"]]
+    data = MetricHolder.MetricHolder()
+    data.dmos = kadid_data()
+    for metrics in metric_combos2:
+        if len(metrics) == 2:
+            ssim_data = np.array(get_metric_values_from_csv("ssim"))
+            ms_ssim_data = np.array(get_metric_values_from_csv("ms-ssim"))
+
+            for i in range(len(ssim_data)):
+                if math.isnan(ssim_data[i]): ssim_data[i] = 0.0
+                elif math.isnan(ms_ssim_data[i]): ms_ssim_data[i] = 0.0
+                data.metric_values.append([ssim_data[i], ms_ssim_data[i]])
+        else:
+            data0 = np.array(get_metric_values_from_csv(metrics[0]))
+            data1 = np.array(get_metric_values_from_csv(metrics[1]))
+            data2 = np.array(get_metric_values_from_csv(metrics[2]))
+
+            for i in range(len(data0)):
+                if math.isnan(data0[i]): data0[i] = 0.0
+                elif math.isnan(data1[i]): data1[i] = 0.0
+                elif math.isnan(data2[i]): data2[i] = 0.0
+                data.metric_values.append([data0[i], data1[i], data2[i]])
+
+        compile_concrete_model_with_values(np.array(data.metric_values), data.dmos, metrics, len(metrics))
+        data.metric_values = []
+
+def model_processing_one_by_one():
+    '''
+    Function to do the whole training process from data preparation to model evaluation by each metric one by one.
+    '''
+    metrics = ["mse", "ergas", "psnr", "ssim", "ms-ssim", "vif", "scc", "sam"]
+    for metric in metrics:
+        print(f"Getting data and compiling model for {metric} metric...")
+        compile_model_by_one_metric(metric)
